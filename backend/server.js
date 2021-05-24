@@ -2,7 +2,7 @@
 const express =require("express");
 const mongoose=require("mongoose");
 const cors = require("cors");
-
+var uniqueValidator = require('mongoose-unique-validator');
 const app=express();
 app.use(cors());
 app.use(express.static("public"));
@@ -32,11 +32,37 @@ mongoose.connect(url,connectionParams)
 
 //Making a collection schema
 const userSchema={
-    username : String,
-    password : String
+    username :{
+        type: String,
+        trim: true,
+        lowercase: true,
+        unique: true,
+        validate: {
+            validator: function(v) {
+                return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+            },
+            message: "Please enter a valid email"
+        },
+        required: [true, "Email required"]
+    },
+    password :{
+        type: String,
+        trime: true,
+        validate: {
+            validator: function(v) {
+                return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(v);
+            },
+            message: "Password must be of atleast length 8 including one uppercase letter and a number"
+        },
+        required: [true, "Password is required"]
+    }    
 };
 
+
+
 const user = new mongoose.model("user", userSchema);
+
+
 
 //express routing
 app.route("/users")

@@ -1,6 +1,7 @@
 //jshint esversion:6
 import React from 'react';
 import axios from 'axios';
+import secrets from '../components/secrets';
 import { API_ROOT } from '../components/api-config';
 class login extends React.Component{
 
@@ -53,10 +54,12 @@ class login extends React.Component{
       .then((res)=>{
         console.log(res.data);
         if(res.data.username && res.data.password){
+          window.location.replace("http://localhost:3000/secrets");
           this.setState({
             status:1 
           });
           console.log(this.state.status);
+          
         }
         else{ 
           this.setState({
@@ -106,12 +109,12 @@ class login extends React.Component{
               name="password"
               value={this.state.password}
               onChange={this.handlePasswordChange}
-              placeholder='Enter Password'></input>
+              placeholder='Enter Password' required ="required"></input>
             <br></br>
             <center>
               <button type='submit' className='btn btn-primary' onClick ={this.submitHandle}>
                 Submit
-              </button>{this.state.status?"Logged in":"Not logged in"}
+              </button><br></br>{this.state.status?"Logged in":"Not logged in"}
            
             </center>
           </form>

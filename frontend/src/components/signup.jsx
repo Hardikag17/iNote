@@ -10,7 +10,7 @@ class SignUp extends React.Component{
     this.state ={
       username : '',
       password : '',
-      status : 0,
+      status : null,
     };
 
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -35,8 +35,6 @@ class SignUp extends React.Component{
     console.log("button clicked");
     event.preventDefault();
 
-   
-
     axios
       .post(`${API_ROOT}/users`, {
         username: this.state.username,
@@ -47,6 +45,7 @@ class SignUp extends React.Component{
         this.setState({
           status:0 
         });
+        
       })        
       .catch((err)=>{
         console.log(err);
@@ -91,7 +90,7 @@ class SignUp extends React.Component{
             <center>
               <button type='submit' className='btn btn-primary' onClick ={this.submitHandle}>
                 Submit
-              </button>{this.state.status?"Successfully account made":"Error Please try again"}
+              </button><br></br>{this.state.status?"Account Successfully made":"Please enter the details"}
            
             </center>
           </form>
