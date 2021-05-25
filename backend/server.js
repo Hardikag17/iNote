@@ -1,8 +1,10 @@
 //jshint esversion:6
+require('dotenv').config()
 const express =require("express");
 const mongoose=require("mongoose");
 const cors = require("cors");
 var uniqueValidator = require('mongoose-unique-validator');
+var encrypt = require('mongoose-encryption');
 const app=express();
 app.use(cors());
 app.use(express.static("public"));
@@ -31,7 +33,7 @@ mongoose.connect(url,connectionParams)
     });
 
 //Making a collection schema
-const userSchema={
+const userSchema= new mongoose.Schema({
     username :{
         type: String,
         trim: true,
@@ -56,9 +58,11 @@ const userSchema={
         },
         required: [true, "Password is required"]
     }    
-};
+});
 
 
+
+userSchema.plugin(encrypt , {secret : process.env.SECRET,encryptedFeilds : ['password']});
 
 const user = new mongoose.model("user", userSchema);
 

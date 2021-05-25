@@ -11,6 +11,7 @@ class SignUp extends React.Component{
       username : '',
       password : '',
       status : null,
+      check : ''
     };
 
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -34,7 +35,8 @@ class SignUp extends React.Component{
   submitHandle(event){
     console.log("button clicked");
     event.preventDefault();
-
+    var username= this.state.username;
+    var password= this.state.password;
     axios
       .post(`${API_ROOT}/users`, {
         username: this.state.username,
@@ -43,9 +45,12 @@ class SignUp extends React.Component{
       .then((res)=>{
         console.log(res.data);
         this.setState({
-          status:0 
+          status:0,
+          check : res.data.message
         });
-        
+
+
+        //window.location.replace("http://localhost:3000/secrets");
       })        
       .catch((err)=>{
         console.log(err);
@@ -69,7 +74,7 @@ class SignUp extends React.Component{
             <input
               type='text'
               id='username'
-              className='form-control'
+              className='form-control validate'
               name='username'
               value={this.state.username}
               onChange={this.handleUsernameChange}
@@ -81,7 +86,7 @@ class SignUp extends React.Component{
             <input
               type='password'
               id='password'
-              className='form-control'
+              className='form-control validate'
               name="password"
               value={this.state.password}
               onChange={this.handlePasswordChange}
@@ -91,6 +96,8 @@ class SignUp extends React.Component{
               <button type='submit' className='btn btn-primary' onClick ={this.submitHandle}>
                 Submit
               </button><br></br>{this.state.status?"Account Successfully made":"Please enter the details"}
+              <br></br>
+              {document.getElementsByClassName('validate')[0]=="null"?(<div>Please Fill the required feilds</div>): null}
            
             </center>
           </form>
