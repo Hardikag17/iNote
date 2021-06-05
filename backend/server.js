@@ -3,13 +3,18 @@ require('dotenv').config()
 const express =require("express");
 const mongoose=require("mongoose");
 const cors = require("cors");
-var uniqueValidator = require('mongoose-unique-validator');
-var encrypt = require('mongoose-encryption');
+const routes =require("routes");
+const encrypt = require('mongoose-encryption');
+const session = require('express-session');
+const cookieParser = require("cookie-parser");
+const bcrypt = require("bcryptjs");
+const jwt =require("jsonwebtoken");
 const app=express();
 app.use(cors());
 app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+app.use(cookieParser());
 
 //----------------------- Database ----------------------
 const dbName='mysecuritydb';
@@ -23,6 +28,8 @@ const connectionParams={
     useUnifiedTopology: true 
 };
 
+
+
 const db = mongoose.connection;
 mongoose.connect(url,connectionParams)
     .then( () => {
@@ -31,6 +38,18 @@ mongoose.connect(url,connectionParams)
     .catch( (err) => {
         console.error(`Error connecting to the database. \n${err}`);
     });
+
+
+
+app.use(session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000*60*60*24 }
+  }));
+
+  
+
 
 //Making a collection schema
 const userSchema= new mongoose.Schema({
@@ -48,27 +67,42 @@ const userSchema= new mongoose.Schema({
         required: [true, "Email required"]
     },
     password :{
-        type: String,
-        trime: true,
-        validate: {
-            validator: function(v) {
-                return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(v);
-            },
-            message: "Password must be of atleast length 8 including one uppercase letter and a number"
-        },
-        required: [true, "Password is required"]
+        type: String
     }    
-});
+},{timestamps : true});
 
 
 
-userSchema.plugin(encrypt , {secret : process.env.SECRET,encryptedFeilds : ['password']});
+//userSchema.plugin(encrypt , {secret : process.env.SECRET,encryptedFeilds : ['password']});
 
 const user = new mongoose.model("user", userSchema);
 
 
+//authentication
 
+const authenticate =(req,res,next)=>{
+    try{
+        token = req.headers.authorization.split(' ')[1];
+        if(token == null) return res.sendStatus(401);
+        jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
+            if(err) return res.sendStatus(403);
+            req.user = user;
+            next();
+        });
+           
+     
+    }
+
+    catch(e){
+        res.send(e);
+    }
+};
+
+
+//REST API
 //express routing
+
+
 app.route("/users")
 .get(function(req,res){
     user.find(function(err,foundusers){
@@ -81,6 +115,7 @@ app.route("/users")
     });
 })
 .post(function(req,res){
+
     console.log(req.body.username);
     console.log(req.body.password);
 
@@ -99,7 +134,7 @@ app.route("/users")
             res.send(err);
         }
     });
-    
+
 })
 .delete()
 
@@ -115,7 +150,7 @@ app.route("/users/:Username")
         else{
             res.send(err);
         }
-    })
+    });
 
 })
 .post(function(req,res){
@@ -145,36 +180,22 @@ app.listen(9000,function(){
     console.log("Server is running");
 });
 
+//routes
+app.get("/secrets",authenticate);
 
-/*
-if(user.findOne({username:username})){
+app.post("/signup",function(req,res){
 
-        user.findOne({username:username},function(err,found){
-            if(err){
-                console.log(err);
-            }
-            else{
-                
-                if(found){
-                    if(found.password === password){
-                        console.log("password match");
-                        
-                        
-                    }
-                    else{
-                        
-                        console.log("password wrong");
-                        
-                    }
-                }
-            }
-        });
-    }
-    else{
-    // else statement is not working !!
+    console.log(req.body.username);
+    console.log(req.body.password);
+
+    bcrypt.hash(req.body.password,10,function(err,hashedPass){
+        if(err){
+            res.send(err);
+        }
+
         const newuser=new user({
             username:req.body.username,
-            password:req.body.password
+            password:hashedPass
         });
 
         newuser.save(function(err){
@@ -186,5 +207,49 @@ if(user.findOne({username:username})){
                 res.send(err);
             }
         });
-    }
-*/
+    
+    })
+  
+    
+
+});
+
+
+app.post("/login",function(req,res){
+
+    console.log(req.body.username);
+    console.log(req.body.password);
+    
+    user.findOne({username:req.body.username},function(err,found){
+        if(err){
+            console.log(err);
+        }
+        else{
+            
+            if(found){
+                bcrypt.compare(req.body.password,found.password,function(err,result){
+                    if(err){
+                        console.log(err);
+                        res.send(err);
+                    }
+                    if(result){
+
+                        const username = req.body.username;
+                        const user={name:username};
+                        let token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'1hr'});
+                        res.send(token);
+                        console.log(token);
+                        console.log("login successful");
+                        
+                    }
+                    else{
+                        res.send("Password does not matched");
+                    }
+                })
+            }
+        }
+        
+    });
+
+
+});

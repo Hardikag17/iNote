@@ -3,6 +3,7 @@ import React from 'react';
 import axios from 'axios';
 import secrets from '../components/secrets';
 import { API_ROOT } from '../components/api-config';
+
 class login extends React.Component{
 
   constructor(props){
@@ -32,15 +33,6 @@ class login extends React.Component{
     });
   }
 
-  /*message(){
-    if(this.state.status){
-      document.getElementById("code").innerHTML = "Not logged in";
-    }
-    else{
-      document.getElementById("code").innerHTML = "Logged in";
-    }
-  }
-  */
   submitHandle(event){
     console.log("button clicked");
     event.preventDefault();
@@ -50,23 +42,25 @@ class login extends React.Component{
      
     
     axios
-      .get(`${API_ROOT}/users/${username}`)
+      .post(`${API_ROOT}/login`, {
+        username: this.state.username,
+        password: this.state.password
+      })
       .then((res)=>{
-        console.log(res.data);
-        if(res.data.username && res.data.password){
-          window.location.replace("http://localhost:3000/secrets");
+        console.log(res.status);
+        if(res.status=== 200){
           this.setState({
-            status:1 
+            status:1
           });
-          console.log(this.state.status);
-          
+          window.location.replace("http://localhost:3000/secrets");
         }
-        else{ 
+        else{
+          
           this.setState({
             status:0
           });
-          console.log(this.state.status);
         }
+       
       })
       .catch((err)=>{
         console.log(err);
@@ -75,8 +69,7 @@ class login extends React.Component{
 
 
   render() {
-    
-    
+     
     return (
       <div>
         <div className='w-25 p-3 row mb-3 position-absolute top-50 start-50 translate-middle'>
@@ -115,6 +108,13 @@ class login extends React.Component{
               <button type='submit' className='btn btn-primary' onClick ={this.submitHandle}>
                 Submit
               </button><br></br>{this.state.status?"Logged in":"Not logged in"}
+            <br></br>  
+            <br></br>  
+
+            <button type='submit' class='btn btn-primary'>
+              <i class="fab fa-google"></i>signup with google
+            </button>
+      
            
             </center>
           </form>

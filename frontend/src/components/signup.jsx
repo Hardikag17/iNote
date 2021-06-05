@@ -2,6 +2,7 @@
 import React from 'react';
 import axios from 'axios';
 import { API_ROOT } from '../components/api-config';
+
 class SignUp extends React.Component{
 
   constructor(props){
@@ -11,7 +12,6 @@ class SignUp extends React.Component{
       username : '',
       password : '',
       status : null,
-      check : ''
     };
 
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -38,23 +38,22 @@ class SignUp extends React.Component{
     var username= this.state.username;
     var password= this.state.password;
     axios
-      .post(`${API_ROOT}/users`, {
+      .post(`${API_ROOT}/signup`, {
         username: this.state.username,
         password: this.state.password
       })
       .then((res)=>{
         console.log(res.data);
         this.setState({
-          status:0,
-          check : res.data.message
+          status:0
+          
         });
 
-
-        //window.location.replace("http://localhost:3000/secrets");
+        window.location.replace("http://localhost:3000/secrets");
       })        
-      .catch((err)=>{
-        console.log(err);
-      })
+      .catch((error)=>{
+        console.log(error);
+      });
   }
 
   render() {
@@ -67,7 +66,7 @@ class SignUp extends React.Component{
           <br></br>
           <br></br>
           <br></br>
-          <form onSubmit={this.submitHandle} action='/login' method='POST'>
+          <form onSubmit={this.submitHandle} action='/signup' method='POST'>
             <label htmlFor='email' className='form-label'>
               Email
             </label>
@@ -96,8 +95,6 @@ class SignUp extends React.Component{
               <button type='submit' className='btn btn-primary' onClick ={this.submitHandle}>
                 Submit
               </button><br></br>{this.state.status?"Account Successfully made":"Please enter the details"}
-              <br></br>
-              {document.getElementsByClassName('validate')[0]=="null"?(<div>Please Fill the required feilds</div>): null}
            
             </center>
           </form>

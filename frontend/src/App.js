@@ -5,24 +5,32 @@ import Home from "../src/components/home";
 import SignUp from "../src/components/signup";
 import LogIn from "../src/components/login";
 import secrets from "../src/components/secrets";
+import Protected from "../src/components/Protected";
+
+
 
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  BrowserRouter
 } from "react-router-dom";
 
 
 function App(){
+  
   return(
+    <BrowserRouter>
         <Router>
           <Switch>
             <Route path='/' exact component={Home} />
             <Route path='/signup' component={SignUp} />
             <Route path='/login' component={LogIn} />
-            <Route path='/secrets' component ={secrets}/>
+            <Protected/>
+            <Route path='*' component={()=>"404 Not Found"}/>
           </Switch>
         </Router>
+    </BrowserRouter>
   );
 }
   /*constructor(props){
