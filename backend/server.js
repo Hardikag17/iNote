@@ -3,9 +3,6 @@ require('dotenv').config()
 const express =require("express");
 const mongoose=require("mongoose");
 const cors = require("cors");
-const routes =require("routes");
-const encrypt = require('mongoose-encryption');
-const session = require('express-session');
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
 const jwt =require("jsonwebtoken");
@@ -39,15 +36,6 @@ mongoose.connect(url,connectionParams)
         console.error(`Error connecting to the database. \n${err}`);
     });
 
-
-
-app.use(session({
-    secret: process.env.SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 1000*60*60*24 }
-  }));
-
   
 
 
@@ -67,8 +55,10 @@ const userSchema= new mongoose.Schema({
         required: [true, "Email required"]
     },
     password :{
-        type: String
-    }    
+        type: String,
+        required: [true, "Password required"],
+        trim:true
+    },   
 },{timestamps : true});
 
 
@@ -82,19 +72,29 @@ const user = new mongoose.model("user", userSchema);
 
 const authenticate =(req,res,next)=>{
     try{
-        token = req.headers.authorization.split(' ')[1];
+        
+        var token = req.cookies.accesstoken;
+        console.log("hardik",req.cookies.accesstoken);
+        //this authorization.split is not working
+        //token = req.headers.authorization.split(' ')[1];
+        
         if(token == null) return res.sendStatus(401);
         jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
             if(err) return res.sendStatus(403);
-            req.user = user;
-            next();
+            else{
+                console.log("verified account");
+                req.user=user;
+                next();
+            }
+           
         });
            
      
     }
 
     catch(e){
-        res.send(e);
+        console.log(e);
+        res.send("Authentication failed");
     }
 };
 
@@ -180,8 +180,16 @@ app.listen(9000,function(){
     console.log("Server is running");
 });
 
+
+app.get('/',function(req,res,next){
+    res.send("Hello from backend!!");
+})
+
 //routes
-app.get("/secrets",authenticate);
+app.get("/secrets",authenticate,function(req,res){
+    console.log("hello",req.cookies.accesstoken);
+    res.sendStatus(200);
+});
 
 app.post("/signup",function(req,res){
 
@@ -216,7 +224,6 @@ app.post("/signup",function(req,res){
 
 
 app.post("/login",function(req,res){
-
     console.log(req.body.username);
     console.log(req.body.password);
     
@@ -237,7 +244,10 @@ app.post("/login",function(req,res){
                         const username = req.body.username;
                         const user={name:username};
                         let token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'1hr'});
-                        res.send(token);
+                        res.status(200).cookie('accesstoken',token,{/*sameSite:'strict',path :'http://localhost:3000/',domain:'http://localhost:3000/secrets' ,*/httpOnly:true}).send(token);
+                        //res.send(token);
+                        //console.log(req.cookies.accesstoken);
+                        //cookies are not forming httpOnlycookie
                         console.log(token);
                         console.log("login successful");
                         

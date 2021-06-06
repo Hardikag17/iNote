@@ -4,6 +4,7 @@ import axios from 'axios';
 import secrets from '../components/secrets';
 import { API_ROOT } from '../components/api-config';
 
+
 class login extends React.Component{
 
   constructor(props){
@@ -39,7 +40,7 @@ class login extends React.Component{
 
     
       var username = this.state.username ;
-     
+      var password = this.state.password;
     
     axios
       .post(`${API_ROOT}/login`, {
@@ -47,7 +48,7 @@ class login extends React.Component{
         password: this.state.password
       })
       .then((res)=>{
-        console.log(res.status);
+        console.log(res);
         if(res.status=== 200){
           this.setState({
             status:1
