@@ -48,7 +48,6 @@ class SignUp extends React.Component{
           status:0
           
         });
-
         window.location.replace("http://localhost:3000/secrets");
       })        
       .catch((error)=>{

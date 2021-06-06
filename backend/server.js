@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
 const jwt =require("jsonwebtoken");
 const app=express();
-app.use(cors());
+app.use(cors({credentials:true,origin:"http://localhost:3000"}));
 app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
@@ -17,7 +17,7 @@ app.use(cookieParser());
 const dbName='mysecuritydb';
 
 //mongoDbAtlas connection
-const url = "mongodb+srv://hardik:safe12@cluster0.7ruau.mongodb.net/mysecuritydb?retryWrites=true&w=majority";
+const url = process.env.URL;
 
 const connectionParams={
     useNewUrlParser: true,
@@ -74,7 +74,6 @@ const authenticate =(req,res,next)=>{
     try{
         
         var token = req.cookies.accesstoken;
-        console.log("hardik",req.cookies.accesstoken);
         //this authorization.split is not working
         //token = req.headers.authorization.split(' ')[1];
         
@@ -187,10 +186,13 @@ app.get('/',function(req,res,next){
 
 //routes
 app.get("/secrets",authenticate,function(req,res){
-    console.log("hello",req.cookies.accesstoken);
     res.sendStatus(200);
 });
 
+app.get("/logout",function(req,res){
+    console.log("removing all cookies and logging out");
+    res.clearCookie("accesstoken").sendStatus(200);
+});
 app.post("/signup",function(req,res){
 
     console.log(req.body.username);
@@ -245,10 +247,6 @@ app.post("/login",function(req,res){
                         const user={name:username};
                         let token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'1hr'});
                         res.status(200).cookie('accesstoken',token,{/*sameSite:'strict',path :'http://localhost:3000/',domain:'http://localhost:3000/secrets' ,*/httpOnly:true}).send(token);
-                        //res.send(token);
-                        //console.log(req.cookies.accesstoken);
-                        //cookies are not forming httpOnlycookie
-                        console.log(token);
                         console.log("login successful");
                         
                     }
