@@ -60,7 +60,7 @@ class SignUp extends React.Component{
       <div>
         <div className='w-25 p-3 row mb-3 position-absolute top-50 start-50 translate-middle'>
           <center>
-            <h3>This is SignUp Page.</h3>
+            <h3>Please register</h3>
           </center>
           <br></br>
           <br></br>

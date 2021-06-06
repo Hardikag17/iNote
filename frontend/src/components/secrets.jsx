@@ -50,7 +50,7 @@ class secrets extends React.Component{
                 <center>
                 <h1>This is a secured page.</h1>
                 <br></br>
-                <h4>Secret :#CryptoIsFuture</h4>
+                <h4>Secret : #CryptoIsFuture</h4>
                 <button type='submit' className='btn btn-primary' onClick ={this.submitHandle}>Logout</button>
                 </center>
             </div>

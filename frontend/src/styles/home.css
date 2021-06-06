@@ -1,0 +1,11 @@
+/* home page styles*/
+
+.gap{
+    margin: 5%;
+}
+
+button{
+    display: inline-block!important;
+    border-radius: 0%!important;
+    background-color: lightgray!important;
+}
