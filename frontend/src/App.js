@@ -20,6 +20,7 @@ import {
 function App(){
   
   return(
+    <div className="App">
     <BrowserRouter>
         <Router>
           <Switch>
@@ -31,6 +32,7 @@ function App(){
           </Switch>
         </Router>
     </BrowserRouter>
+    </div>
   );
 }
   /*constructor(props){

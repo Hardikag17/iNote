@@ -2,6 +2,11 @@
     display: none!important;
 }
 
+.navbar{
+    //background-color: #1c231b!important;
+    font-family: 'B612', sans-serif;
+}
+
 @media screen and (max-width: 600px) {
     .navbar-toggler{
         display: unset!important;

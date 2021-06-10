@@ -1,11 +1,27 @@
 /* home page styles*/
 
+.container{
+   size: 50px;
+   color: whitesmoke;
+   font-size: 70px;
+}
 .gap{
-    margin: 5%;
+    border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size: 16px;
 }
 
-button{
-    display: inline-block!important;
-    border-radius: 0%!important;
-    background-color: lightgray!important;
+.col button:hover{
+    background-color: #5e6064;
+}
+
+.col{
+    margin: 0%!important;
+   
+    border-radius: 0%;
+    text-decoration: none;
 }

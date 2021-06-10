@@ -73,7 +73,7 @@ class login extends React.Component{
   render() {
      
     return (
-      <div>
+      <div className="bg-login">
         <div className='w-25 p-3 row mb-3 position-absolute top-50 start-50 translate-middle'>
           <center>
             <h3>Login</h3>

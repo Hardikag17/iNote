@@ -1,6 +1,7 @@
 //jshint esversion:6
 import React from 'react';
 import axios from 'axios';
+import "../styles/signup.css";
 import { API_ROOT } from '../components/api-config';
 
 class SignUp extends React.Component{
@@ -57,7 +58,7 @@ class SignUp extends React.Component{
 
   render() {
     return (
-      <div>
+      <div className="bg-signup">
         <div className='w-25 p-3 row mb-3 position-absolute top-50 start-50 translate-middle'>
           <center>
             <h3>Please register</h3>

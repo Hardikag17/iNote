@@ -2,4 +2,12 @@
     position: fixed;
     bottom: 0;
     height: auto;
+    color: white;
+    font-family: 'B612', sans-serif;
+}
+
+.logo-size{
+    width: 100px; 
+    height: 100px; 
+    float: right;
 }
