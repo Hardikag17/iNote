@@ -44,9 +44,10 @@ class secrets extends React.Component {
     return (
       <div className="bg">
         <div className=" notepad-nav ">
+          <h1 className="c">#DTech</h1>
           <button
             type='submit'
-            className='a btn btn-primary '
+            className='a c btn btn-primary '
             onClick={this.submitHandle}>
             Logout
           </button>
