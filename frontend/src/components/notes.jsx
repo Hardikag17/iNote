@@ -1,15 +1,14 @@
 //jshint esversion:6
 
-//use state for sediting and preview tabs
-
-
 import react, { useEffect, useState } from 'react';
 import uuid from 'react-uuid';
 import Sidebar from '../components/notepad/Sidebar';
 import Preview from '../components/notepad/preview';
 import Edit from '../components/notepad/edit';
 import '../styles/secrets.css';
-
+import { API_ROOT } from '../components/api-config';
+import axios from "axios";
+//have the username from login page to here 
 function Notes() {
   const [notes, setNotes] = useState(
     localStorage.notes ? JSON.parse(localStorage.notes) : []
@@ -18,7 +17,8 @@ function Notes() {
   const [editing , setEditing] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(notes));
+   localStorage.setItem('notes', JSON.stringify(notes));
+    
   }, [notes]);
 
   
@@ -80,10 +80,13 @@ function Notes() {
         <div class="row">
         <div class="col-9">
         <button
+          className="tab"
          onClick={currentStateEdit} >
           Edit
         </button>
-        <button onClick={currentStatePreview}>
+        <button
+        className="tab" 
+        onClick={currentStatePreview}>
           Preview
         </button>
       </div>

@@ -67,6 +67,97 @@ const userSchema= new mongoose.Schema({
 
 const user = new mongoose.model("user", userSchema);
 
+//Notes schema
+
+const noteSchema = new mongoose.Schema({
+    username: {
+        type :String,
+        required :[true]
+    },
+    title:{
+        type : String
+    },
+    content :{
+        type : String
+    }
+},{timestamps : true});
+
+const note = new mongoose.model("note", noteSchema);
+
+//Notes route
+
+app.route("/notes")
+.get(function(req,res){
+    //console.log(req.cookies.accesstoken);
+    note.find({username : req.body.username},function(err,found){
+        if(err){
+            console.log(err);
+            res.send(err);
+        }
+        else{
+            console.log(found);
+            res.send(found);
+        }
+    });
+})
+.post(function(req,res){
+    console.log(req.body.username);
+    console.log(req.body.title);
+    console.log(req.body.content);
+
+    const newnote=new note({
+        username:req.body.username,
+        title:req.body.title,
+        content:req.body.content
+    });
+
+    newnote.save(function(err){
+        if(!err){
+            res.send("successfully added your note");
+            console.log("successfully added your notes");
+        }
+        else{
+            res.send(err);
+        }
+    });
+
+})
+.put(function(req,res){
+   
+   note.updateOne(
+       {username : req.body.username},
+       {title:req.body.title , content:req.body.content},
+       function(err){
+           if(!err){
+               console.log("note updated");
+               res.send("note updated");
+           }
+           else{
+            console.log("note cannot be updated");
+               res.send("Cannot find the note which has to be updated");
+           }
+       }
+    );
+})
+.delete(function(req,res){
+    
+    note.deleteOne(
+        {username:req.body.username},
+        {title:req.body.title , content:req.body.content},
+        function(err){
+            if(!err){
+                console.log("note deleted");
+                res.send("note deleted");
+            }
+            else{
+             console.log("note cannot be deleted");
+                res.send("Cannot find the note which has to be deleted");
+            }
+        }
+     );
+
+});
+
 
 //authentication
 
@@ -140,7 +231,7 @@ app.route("/users")
 //targetting a single entry
 
 app.route("/users/:Username")
-.get(function(req,res){
+.get(authenticate,function(req,res){
     
     user.findOne({username:req.params.Username},function(err,founduser){
         if(founduser){
@@ -152,7 +243,7 @@ app.route("/users/:Username")
     });
 
 })
-.post(function(req,res){
+.post(authenticate,function(req,res){
     user.findOne({username:req.params.Username},function(err,found){
         if(err){
             console.log(err);
@@ -186,7 +277,9 @@ app.get('/',function(req,res,next){
 
 //routes
 app.get("/secrets",authenticate,function(req,res){
-    res.sendStatus(200);
+   
+    console.log("this is the response :",res.data);
+    res.status(200).send(res.user);
 });
 
 app.get("/logout",function(req,res){

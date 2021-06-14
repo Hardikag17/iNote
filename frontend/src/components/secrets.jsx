@@ -31,7 +31,7 @@ class secrets extends React.Component {
     axios
       .get(`${API_ROOT}/secrets`)
       .then((res) => {
-        console.log(res.status);
+        console.log(JSON.stringify(res.user));
         console.log('Logged In');
       })
       .catch((err) => {

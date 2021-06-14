@@ -5,7 +5,7 @@ import secrets from '../components/secrets';
 import "../styles/login.css";
 import { API_ROOT } from '../components/api-config';
 
-
+export const UserContext = React.createContext();
 class login extends React.Component{
 
   constructor(props){
